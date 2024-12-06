@@ -385,8 +385,8 @@ void initialize_window() {
     g_state.background = new Entity;
     g_state.background->set_texture_id(g_background_texture_id);
     g_state.background->set_position(glm::vec3(0.0f, 0.0f, 0.0f));
-    g_state.background->set_width(10.0f); // Adjust based on your screen width
-    g_state.background->set_height(7.5f); // Adjust based on your screen height
+    g_state.background->set_width(10.0f);
+    g_state.background->set_height(7.5f);
     g_state.background->set_scale(glm::vec3(12.8f, 9.6f, 0.0f));
     g_state.background->update(0.0f, nullptr, nullptr, 0);
 
@@ -543,16 +543,15 @@ void process_input()
                 if (!g_attack_active) {
                     Mix_PlayChannel(NEXT_CHNL, g_shot_sfx, 0);
 
+                    //----Bullet Calculations----//
                     g_state.attack->set_position(init_attack_position);
 
                     // Calculate direction toward the player's position
                     glm::vec3 player_position = g_state.player->get_position();
                     glm::vec3 direction = player_position - init_attack_position;
 
-                    // Normalize the direction vector
                     glm::vec3 normalized_direction = glm::normalize(direction);
 
-                    // Set the bullet's velocity (scale by desired speed, e.g., 2.0f units per second)
                     g_state.attack->set_velocity(normalized_direction * 2.0f);
 
                     g_state.attack->activate();
@@ -570,14 +569,13 @@ void process_input()
                     g_state.attack2->set_position(init_attack2_position);
                     Mix_PlayChannel(NEXT_CHNL, g_shot_2_sfx, 0);
 
+                    //----Bullet Calculations----//
                     // Calculate direction toward the player's position
                     glm::vec3 player_position = g_state.player2->get_position();
                     glm::vec3 direction = player_position - init_attack2_position;
 
-                    // Normalize the direction vector
                     glm::vec3 normalized_direction = glm::normalize(direction);
 
-                    // Set the bullet's velocity (scale by desired speed, e.g., 2.0f units per second)
                     g_state.attack2->set_velocity(normalized_direction * 2.0f);
 
                     g_state.attack2->activate();
@@ -819,24 +817,22 @@ void update()
             g_state.attack2->deactivate();
         }
 
+
+        //----Rotation Calculations----//
         glm::vec3 direction = g_state.player->get_position() - g_state.cannons[0].get_position();
 
-            // Use atan2 to find the angle (in radians)
         float anglep1 = std::atan2(direction.y, direction.x);
 
-            // Convert radians to degrees if needed
         float anglep1_degrees = glm::degrees(anglep1);
-        float smoothing_factor = 0.1f; // Adjust between 0.0f and 1.0f for smoothness
+        float smoothing_factor = 0.1f; 
         float rocketAngle = glm::mix(g_state.cannons[0].get_angle(), anglep1, smoothing_factor);
         g_state.cannons[0].set_angle(rocketAngle);
 
 
         glm::vec3 direction2 = g_state.player2->get_position() - g_state.cannons[1].get_position();
 
-        // Use atan2 to find the angle (in radians)
         float anglep2 = std::atan2(direction2.y, direction2.x);
 
-        // Convert radians to degrees if needed
         float anglep2_degrees = glm::degrees(anglep2);
         float rocketAngle2 = glm::mix(g_state.cannons[1].get_angle(), anglep2, smoothing_factor);
         g_state.cannons[1].set_angle(rocketAngle2);
